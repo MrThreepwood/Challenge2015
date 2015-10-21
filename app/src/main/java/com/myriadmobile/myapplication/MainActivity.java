@@ -1,16 +1,31 @@
 package com.myriadmobile.myapplication;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements FragmentSwapper {
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.container_main);
+        if (savedInstanceState != null)
+            return;
+        prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        if (prefs.contains("login") && prefs.getBoolean("login", true)) {
+            KingdomsFragment kingdomsFragment = new KingdomsFragment();
+            getFragmentManager().beginTransaction().add(R.id.main_container, kingdomsFragment).commit();
+        } else {
+            LoginFragment loginFragment = new LoginFragment();
+            getFragmentManager().beginTransaction().add(R.id.main_container, loginFragment).commit();
+        }
     }
 
     @Override
@@ -22,16 +37,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public void setPreferences (String key, Boolean bool) {
+        prefs.edit().putBoolean(key, bool);
+    }
+    public void swapFragments (int container, Fragment fragment) {
+        getFragmentManager().beginTransaction().replace(container, fragment);
+    }
+    public Context getContext() {
+        return this;
     }
 }
