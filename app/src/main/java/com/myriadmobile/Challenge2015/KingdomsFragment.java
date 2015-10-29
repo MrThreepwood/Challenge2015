@@ -1,4 +1,4 @@
-package com.myriadmobile.myapplication;
+package com.myriadmobile.Challenge2015;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import API.ChallengeAPI;
-import Models.KingdomModel;
+import Models.KingdomBriefModel;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
@@ -23,7 +23,7 @@ import retrofit.client.Response;
 
 
 public class KingdomsFragment extends Fragment {
-    List<KingdomModel> kingdoms = new ArrayList<KingdomModel>();
+    List<KingdomBriefModel> kingdoms = new ArrayList<KingdomBriefModel>();
     KingdomsAdapter adapter;
     @Bind(R.id.cardList) RecyclerView recyclerView;
     @Bind(R.id.empty_text) TextView tvEmpty;
@@ -55,7 +55,7 @@ public class KingdomsFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        adapter = new KingdomsAdapter(kingdoms, getActivity());
+        adapter = new KingdomsAdapter(kingdoms, (FragmentSwapper) getActivity());
         recyclerView.setAdapter(adapter);
         if (!kingdoms.isEmpty())
             tvEmpty.setVisibility(View.GONE);
@@ -64,15 +64,15 @@ public class KingdomsFragment extends Fragment {
 
     private void createDummyKingdoms() {
         for (int i = 0; i < 12; i++) {
-            kingdoms.add(new KingdomModel(Integer.toString(i), "Kingdom " + i, null));
+            kingdoms.add(new KingdomBriefModel(Integer.toString(i), "Kingdom " + i, null));
         }
     }
     private void getKingdoms() {
         MyApplication application = (MyApplication) getActivity().getApplication();
         ChallengeAPI api = application.getApiInstance();
-        api.getKingdoms(new Callback<List<KingdomModel>>() {
+        api.getKingdoms(new Callback<List<KingdomBriefModel>>() {
             @Override
-            public void success(List<KingdomModel> kingdomsResponse, Response response) {
+            public void success(List<KingdomBriefModel> kingdomsResponse, Response response) {
                 if (kingdomsResponse != null && !kingdomsResponse.isEmpty()) {
                     kingdoms = kingdomsResponse;
                     adapter.kingdoms = kingdoms;

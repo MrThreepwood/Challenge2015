@@ -1,7 +1,8 @@
-package com.myriadmobile.myapplication;
+package com.myriadmobile.Challenge2015;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,16 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import Models.KingdomModel;
+import Models.KingdomBriefModel;
 
 /**
  * Created by joshuaswoyer on 10/21/15.
  */
 public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.KingdomsViewHolder> {
-    public List<KingdomModel> kingdoms;
+    public List<KingdomBriefModel> kingdoms;
     static FragmentSwapper swapper;
 
-    public KingdomsAdapter (List<KingdomModel> kingdoms, FragmentSwapper swapper) {
+    public KingdomsAdapter (List<KingdomBriefModel> kingdoms, FragmentSwapper swapper) {
         this.kingdoms = kingdoms;
         this.swapper = swapper;
     }
@@ -33,15 +34,16 @@ public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.Kingdo
 
     @Override
     public void onBindViewHolder (KingdomsViewHolder kingdomsViewHolder, int i) {
-        KingdomModel kingdom = kingdoms.get(i);
+        KingdomBriefModel kingdom = kingdoms.get(i);
         kingdomsViewHolder.vKingdomName.setText(kingdom.getName());
-        Picasso.with(swapper.getContext()).setLoggingEnabled(true);
+        //Picasso.with(swapper.getContext()).setLoggingEnabled(true);
         Picasso.with(swapper.getContext()).setIndicatorsEnabled(true);
         if (kingdom.getImage() != null && !kingdom.getImage().isEmpty())
             Picasso.with(swapper.getContext())
                 .load(kingdom.getImage())
                 .fit()
                 .into(kingdomsViewHolder.vImage);
+        Log.d("KingdomId", "onBindViewHolder " + kingdom.getId());
         kingdomsViewHolder.view.setTag(kingdom.getId());
     }
 
@@ -73,7 +75,7 @@ public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.Kingdo
                     args.putString("kingdomId", kingdomId);
                     KingdomPager f = new KingdomPager();
                     f.setArguments(args);
-                    swapper.swapFragments(R.id.main_container, f);
+                    swapper.swapFragments(R.id.fragment_container, f, true);
                 }
             });
         }

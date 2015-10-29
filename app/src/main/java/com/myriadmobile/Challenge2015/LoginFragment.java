@@ -1,15 +1,17 @@
-package com.myriadmobile.myapplication;
+package com.myriadmobile.Challenge2015;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import API.ChallengeAPI;
 import Models.MessageModel;
@@ -70,18 +72,22 @@ public class LoginFragment extends Fragment {
 
     public void validate(){
         String nameText = name.getText().toString();
-        String emailText = email.getText().toString();
-        if (nameText != null && !nameText.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
+        final String emailText = email.getText().toString();
+        if (!nameText.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
             MyApplication application = (MyApplication) getActivity().getApplication();
             ChallengeAPI api = application.getApiInstance();
+            View v = getActivity().getCurrentFocus();
+            if (v != null) {
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
             api.logIn(emailText, new Callback<MessageModel>() {
                 @Override
                 public void success(MessageModel messageModel, Response response) {
-                    Log.d("response", Integer.toString(response.getStatus()));
                     if (response.getStatus() == 200) {
-                        mListener.setPreferences("login", true);
+                        mListener.setPreferences("login", emailText);
                         KingdomsFragment fragment = new KingdomsFragment();
-                        mListener.swapFragments(R.id.main_container, fragment);
+                        mListener.swapFragments(R.id.fragment_container, fragment, false);
                     }
                 }
 
@@ -90,6 +96,12 @@ public class LoginFragment extends Fragment {
 
                 }
             });
+        } else if (nameText.isEmpty()) {
+            Toast.makeText((Context) mListener, "The name field is required", Toast.LENGTH_LONG).show();
+        } else if (emailText.isEmpty()) {
+            Toast.makeText((Context) mListener, "The email field is required", Toast.LENGTH_LONG).show();
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
+            Toast.makeText((Context) mListener, "The email you provided is not valid", Toast.LENGTH_LONG).show();
         }
     }
 

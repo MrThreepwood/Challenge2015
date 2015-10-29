@@ -1,4 +1,4 @@
-package com.myriadmobile.myapplication.dummy;
+package com.myriadmobile.Challenge2015.dummy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

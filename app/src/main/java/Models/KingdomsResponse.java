@@ -10,9 +10,9 @@ import java.util.List;
  * Created by joshuaswoyer on 10/20/15.
  */
 public class KingdomsResponse {
-    public List<KingdomModel> kingdoms;
+    public List<KingdomBriefModel> kingdoms;
     public KingdomsResponse() {
-        kingdoms = new ArrayList<KingdomModel>();
+        kingdoms = new ArrayList<KingdomBriefModel>();
     }
 
     public static KingdomsResponse parseJSON(String response) {

@@ -1,4 +1,4 @@
-package com.myriadmobile.myapplication;
+package com.myriadmobile.Challenge2015;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
