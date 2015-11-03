@@ -3,6 +3,7 @@ package com.myriadmobile.Challenge2015;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,7 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity implements FragmentSwapper {
+public class MainActivity extends AppCompatActivity implements ChildManager {
     SharedPreferences prefs;
     Toolbar toolbar;
     @Override
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements FragmentSwapper {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -54,22 +54,6 @@ public class MainActivity extends AppCompatActivity implements FragmentSwapper {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-    public void setPreferences (String key, String email) {
-        prefs.edit().putString(key, email).commit();
-        getSupportActionBar().setTitle(email);
-    }
-    public void swapFragments (int container, Fragment fragment, boolean backstack) {
-        FragmentTransaction fTrans = getFragmentManager().beginTransaction().replace(container, fragment);
-        if (backstack)
-            fTrans.addToBackStack("kingdoms");
-        fTrans.commit();
-        if (!(fragment instanceof LoginFragment)) {
-            toolbar.setVisibility(View.VISIBLE);
-        }
-        else {
-            toolbar.setVisibility(View.GONE);
-        }
     }
     @Override
     public void onBackPressed() {
@@ -92,6 +76,27 @@ public class MainActivity extends AppCompatActivity implements FragmentSwapper {
             swapFragments(R.id.fragment_container, loginFragment, false);
             return false;
         }
+    }
+    //Everything below here is implementation for the Child Manager interface.
+    public void setPreferences (String key, String email) {
+        prefs.edit().putString(key, email).commit();
+        getSupportActionBar().setTitle(email);
+    }
+    public void swapFragments (int container, Fragment fragment, boolean backstack) {
+        FragmentTransaction fTrans = getFragmentManager().beginTransaction().replace(container, fragment);
+        if (backstack)
+            fTrans.addToBackStack("kingdoms");
+        fTrans.commit();
+        if (!(fragment instanceof LoginFragment)) {
+            toolbar.setVisibility(View.VISIBLE);
+        }
+        else {
+            toolbar.setVisibility(View.GONE);
+        }
+    }
+    public void startNewActivity (Class activityClass) {
+        Intent intent = new Intent(this, activityClass);
+        this.startActivity(intent);
     }
 }
 

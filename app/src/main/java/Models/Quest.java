@@ -10,7 +10,7 @@ public class Quest implements Serializable {
     String name;
     String description;
     String image;
-    QuestGiver giver;
+    QuestGiverBrief giver;
 
     public String getId() {
         return id;
@@ -31,12 +31,12 @@ public class Quest implements Serializable {
         return image;
     }
 
-    public QuestGiver getGiver() {
+    public QuestGiverBrief getGiver() {
 
         return giver;
     }
 
-    public Quest Quests(QuestGiver giver, String image, String description, String name, String id) {
+    public Quest Quests(QuestGiverBrief giver, String image, String description, String name, String id) {
         this.giver = giver;
         this.image = image;
         this.description = description;

@@ -27,7 +27,7 @@ public class LoginFragment extends Fragment {
     @Bind(R.id.email) EditText email;
     @Bind(R.id.submit) Button submit;
 
-    private FragmentSwapper mListener;
+    private ChildManager mListener;
 
 
     public LoginFragment() {
@@ -58,7 +58,7 @@ public class LoginFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (FragmentSwapper) activity;
+            mListener = (ChildManager) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");

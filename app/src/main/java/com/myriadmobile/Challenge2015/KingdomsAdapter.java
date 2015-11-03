@@ -20,9 +20,9 @@ import Models.KingdomBriefModel;
  */
 public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.KingdomsViewHolder> {
     public List<KingdomBriefModel> kingdoms;
-    static FragmentSwapper swapper;
+    static ChildManager swapper;
 
-    public KingdomsAdapter (List<KingdomBriefModel> kingdoms, FragmentSwapper swapper) {
+    public KingdomsAdapter (List<KingdomBriefModel> kingdoms, ChildManager swapper) {
         this.kingdoms = kingdoms;
         this.swapper = swapper;
     }

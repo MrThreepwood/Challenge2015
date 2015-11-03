@@ -42,9 +42,9 @@ public class KingdomDetails extends Fragment {
             if (kingdom.getImage() != null && !kingdom.getImage().isEmpty())
                 Picasso.with(getActivity()).load(kingdom.getImage()).into(ivKingdomImage);
             tvKingdomName.setText(kingdom.getName());
-            tvClimate.setText("Climate: " + kingdom.getClimate());
-            tvPopulation.setText("Population: " + kingdom.getPopulation());
-            tvLanguage.setText("Language: " + "no launguage field in database.");
+            tvClimate.setText(kingdom.getClimate());
+            tvPopulation.setText(kingdom.getPopulation());
+            tvLanguage.setText("no launguage field in database.");
         }
         return v;
 

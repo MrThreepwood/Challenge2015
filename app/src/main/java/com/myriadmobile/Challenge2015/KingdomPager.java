@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import API.ChallengeAPI;
-import Models.KingdomDetailedModel;
-import Models.Quest;
+import Models.*;
+import Models.Character;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
@@ -43,7 +43,7 @@ public class KingdomPager extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         kingdomId = getArguments().getString("kingdomId");
-        kingdomDetails = getKingdomFromAPI();
+        getKingdomFromAPI();
         View v = inflater.inflate(R.layout.fragment_kingdom_pager, container, false);
         ButterKnife.bind(this, v);
         return v;
@@ -65,18 +65,17 @@ public class KingdomPager extends Fragment {
         return fragments;
     }
 
-    private KingdomDetailedModel getKingdomFromAPI() {
-        if (kingdomId != null) {
-            api = ((MyApplication)getActivity().getApplication()).getApiInstance();
-        }
+    private void getKingdomFromAPI() {
+        api = ((MyApplication) getActivity().getApplication()).getApiInstance();
         api.getKingdomDetails(kingdomId, new Callback<KingdomDetailedModel>() {
             @Override
             public void success(KingdomDetailedModel kingdomDetailedModel, Response response) {
-                if(kingdomDetailedModel != null) {
+                if (kingdomDetailedModel != null) {
                     kingdomDetails = kingdomDetailedModel;
                     fragments = getFragments();
-                    detailAdapter = new DetailAdapter(getChildFragmentManager(),fragments);
+                    detailAdapter = new DetailAdapter(getChildFragmentManager(), fragments);
                     pager.setAdapter(detailAdapter);
+                    getCharacterFromAPI();
                 }
             }
 
@@ -85,7 +84,31 @@ public class KingdomPager extends Fragment {
 
             }
         });
-        return kingdomDetails;
+    }
+    private void getCharacterFromAPI() {
+        for (Quest quest: kingdomDetails.getQuests()) {
+            if (quest.getGiver().getId() != null && !quest.getGiver().getId().isEmpty()) {
+                api = ((MyApplication)getActivity().getApplication()).getApiInstance();
+                api.getCharacter(quest.getGiver().getId(), new Callback<Models.Character>() {
+                    @Override
+                    public void success(Character character, Response response) {
+                        for (Fragment fragment: fragments) {
+                            if (fragment instanceof QuestDetails) {
+                                QuestDetails questDetails = (QuestDetails) fragment;
+                                if (questDetails.characterId == character.getId() && questDetails.character == null) {
+                                    questDetails.setCharacter(character);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+            }
+        }
     }
 
 

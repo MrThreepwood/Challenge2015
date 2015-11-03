@@ -2,6 +2,7 @@ package com.myriadmobile.Challenge2015;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,6 +28,7 @@ public class KingdomsFragment extends Fragment {
     KingdomsAdapter adapter;
     @Bind(R.id.cardList) RecyclerView recyclerView;
     @Bind(R.id.empty_text) TextView tvEmpty;
+    @Bind(R.id.swiper) SwipeRefreshLayout swiper;
 
     public static KingdomsFragment newInstance(String param1, String param2) {
         KingdomsFragment fragment = new KingdomsFragment();
@@ -55,10 +57,17 @@ public class KingdomsFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        adapter = new KingdomsAdapter(kingdoms, (FragmentSwapper) getActivity());
+        adapter = new KingdomsAdapter(kingdoms, (ChildManager) getActivity());
         recyclerView.setAdapter(adapter);
-        if (!kingdoms.isEmpty())
+        if (!kingdoms.isEmpty()) {
             tvEmpty.setVisibility(View.GONE);
+        }
+        swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getKingdoms();
+            }
+        });
         return view;
     }
 
@@ -77,6 +86,7 @@ public class KingdomsFragment extends Fragment {
                     kingdoms = kingdomsResponse;
                     adapter.kingdoms = kingdoms;
                     adapter.notifyDataSetChanged();
+                    swiper.setRefreshing(false);
                 }
             }
 

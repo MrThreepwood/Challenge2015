@@ -2,9 +2,7 @@ package API;
 
 import java.util.List;
 
-import Models.KingdomBriefModel;
-import Models.KingdomDetailedModel;
-import Models.MessageModel;
+import Models.*;
 import retrofit.Callback;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
@@ -23,4 +21,6 @@ public interface ChallengeAPI {
     public void getKingdoms(Callback<List<KingdomBriefModel>> responseCallback);
     @GET("/kingdoms/{id}")
     public void getKingdomDetails(@Path("id") String kingdomId,Callback<KingdomDetailedModel> responseCallback);
+    @GET("/characters/{id}")
+    public void getCharacter(@Path("id") String characterId, Callback<Models.Character> responseCallback);
 }

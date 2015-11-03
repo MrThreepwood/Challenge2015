@@ -3,11 +3,16 @@
     android:layout_below="@+id/toolbar"
     android:layout_height="match_parent"
     tools:context="com.myriadmobile.Challenge2015.KingdomsFragment">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/cardList"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cardList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
     <TextView
         android:id="@+id/empty_text"
         android:layout_width="match_parent"
