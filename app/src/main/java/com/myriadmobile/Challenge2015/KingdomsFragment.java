@@ -57,7 +57,7 @@ public class KingdomsFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        adapter = new KingdomsAdapter(kingdoms, (ChildManager) getActivity());
+        adapter = new KingdomsAdapter(kingdoms);
         recyclerView.setAdapter(adapter);
         if (!kingdoms.isEmpty()) {
             tvEmpty.setVisibility(View.GONE);

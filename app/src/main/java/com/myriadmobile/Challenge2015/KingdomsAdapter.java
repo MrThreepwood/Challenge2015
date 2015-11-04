@@ -20,11 +20,9 @@ import Models.KingdomBriefModel;
  */
 public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.KingdomsViewHolder> {
     public List<KingdomBriefModel> kingdoms;
-    static ChildManager swapper;
 
-    public KingdomsAdapter (List<KingdomBriefModel> kingdoms, ChildManager swapper) {
+    public KingdomsAdapter (List<KingdomBriefModel> kingdoms) {
         this.kingdoms = kingdoms;
-        this.swapper = swapper;
     }
 
     @Override
@@ -37,9 +35,9 @@ public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.Kingdo
         KingdomBriefModel kingdom = kingdoms.get(i);
         kingdomsViewHolder.vKingdomName.setText(kingdom.getName());
         //Picasso.with(swapper.getContext()).setLoggingEnabled(true);
-        Picasso.with(swapper.getContext()).setIndicatorsEnabled(true);
+        //Picasso.with(swapper.getContext()).setIndicatorsEnabled(true);
         if (kingdom.getImage() != null && !kingdom.getImage().isEmpty())
-            Picasso.with(swapper.getContext())
+            Picasso.with(kingdomsViewHolder.view.getContext())
                 .load(kingdom.getImage())
                 .fit()
                 .into(kingdomsViewHolder.vImage);
@@ -75,6 +73,7 @@ public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.Kingdo
                     args.putString("kingdomId", kingdomId);
                     KingdomPager f = new KingdomPager();
                     f.setArguments(args);
+                    ChildManager swapper = (ChildManager) view.getContext();
                     swapper.swapFragments(R.id.fragment_container, f, true);
                 }
             });
