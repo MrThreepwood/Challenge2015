@@ -5,13 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Handler;
-import android.view.Display;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.myriadmobile.Challenge2015.R;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,20 +19,18 @@ public class BallView extends View {
 
     public float x;
     public float y;
-    private final int r;
+    private int r;
     Handler mHandler = new Handler(); //so redraw occurs in main thread
     Timer mTmr = null;
     public int mScrWidth, mScrHeight;
-    float dragCoeff = .02f;
-    View view;
+    float dragCoeff = .001f;
     PointF mBallSpd = new PointF(0,0);
     PointF mBallAcl = new PointF(0,0);
     PointF coin1Pos = new PointF(0,0);
     PointF coin2Pos = new PointF(0,0);
-    float coinSize = 8;
+    float coinSize;
     int coinsColected = 0;
     long time;
-    Context context;
     boolean coin1 = true;
     boolean coin2 = true;
 
@@ -47,21 +41,9 @@ public class BallView extends View {
     //construct new ball object
     public BallView(Context context) {
         super(context);
-        this.context = context;
         //color hex is [transparency][red][green][blue]
         ballColor.setColor(0xFF00FF00);  //not transparent. color is green
         coinColor.setColor(0xffffff00);
-        WindowManager window = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = window.getDefaultDisplay();
-        mScrWidth = display.getWidth();
-        mScrHeight = display.getHeight();
-        x = mScrWidth / 2;
-        y = mScrHeight / 2;
-        r = 12;  //radius
-        debugWindow(context);
-        placeCoin(1);
-        placeCoin(2);
-        time = System.currentTimeMillis()/1000;
         //create timer to move ball to new position
     }
     public void startTimer() {
@@ -69,15 +51,37 @@ public class BallView extends View {
         mTmr.schedule(new MyTimerTask(), 10, 10);
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        DisplayMetrics display = getResources().getDisplayMetrics();
+        mScrWidth = w;
+        mScrHeight = h;
+        x = mScrWidth / 2;
+        y = mScrHeight / 2;
+        int scalar = h*w/200000;
+        r =  Math.round(scalar*1.8f);//radius
+        coinSize = Math.round(scalar*1.4f);
+        dragCoeff = scalar*dragCoeff;
+        placeCoin(1);
+        placeCoin(2);
+        time = System.currentTimeMillis()/1000;
+        ((TiltBallActivity)getContext()).scalar = scalar;
+        startTimer();
+    }
+
     //called by invalidate()
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(0xff000000);
+        if (r == 0) {
+            return;
+        }
         if (coin1) {
             double xDiff1 = x - coin1Pos.x;
             double yDiff1 = y - coin1Pos.y;
-            if (xDiff1 * xDiff1 + yDiff1 * yDiff1 < 400) {
+            if (xDiff1 * xDiff1 + yDiff1 * yDiff1 < coinSize*coinSize + r*r) {
                 placeCoin(1);
             }
             if(coin1)
@@ -86,7 +90,7 @@ public class BallView extends View {
         if (coin2) {
             double xDiff2 = x-coin2Pos.x;
             double yDiff2 = y-coin2Pos.y;
-            if (xDiff2 * xDiff2 + yDiff2 * yDiff2 < 400) {
+            if (xDiff2 * xDiff2 + yDiff2 * yDiff2 < coinSize*coinSize + r*r) {
                 placeCoin(2);
             }
             if (coin2)
@@ -113,16 +117,12 @@ public class BallView extends View {
         if (coinsColected >= 12) {
             long completedIn = System.currentTimeMillis()/1000- time;
             CharSequence text = "You collected 10 coins in " + completedIn + " seconds!";
-            Toast congrats = Toast.makeText(context, text, Toast.LENGTH_LONG);
+            Toast congrats = Toast.makeText(getContext(), text, Toast.LENGTH_LONG);
             congrats.show();
         }
     }
     class MyTimerTask extends TimerTask {
         public void run() {
-            //if debugging with external device,
-            //  a log cat viewer will be needed on the device
-            //android.util.Log.d("TiltBall", "Timer Hit - " + mBallPos.x + ":" + mBallPos.y);
-            //move ball based on current speed
             if ((mBallAcl.x < .02f && mBallAcl.x > 0) || (mBallAcl.x > -.02f && mBallAcl.x < 0))
                 mBallAcl.x =0;
             if ((mBallAcl.y < .02f && mBallAcl.y > 0) || (mBallAcl.y > -.02f && mBallAcl.y < 0))
@@ -150,19 +150,15 @@ public class BallView extends View {
                 y = 0;
                 mBallSpd.y = -mBallSpd.y;
             }
-
-            //redraw ball. Must run in background thread to prevent thread lock.
             mHandler.post(new Runnable() {
                 public void run() {
-                    view.invalidate();
+                    invalidate();
                 }
             });
         }
     }
     public void debugWindow (Context context) {
-        View frameLayout = findViewById(R.id.main_view);
-        TextView debugLog = new TextView(context);
-        debugLog.setText("Debug");
+
     }
     public void reset() {
         if (coinsColected >= 12) {

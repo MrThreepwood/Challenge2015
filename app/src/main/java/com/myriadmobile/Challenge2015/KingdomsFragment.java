@@ -92,7 +92,9 @@ public class KingdomsFragment extends Fragment {
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("GetKingdomsFailure", "failure code " + error.getResponse().getStatus());
+                if (error.getResponse() != null) {
+                    Log.d("GetKingdomsFailure", "failure code " + error.getResponse().getStatus());
+                }
             }
         });
     }
