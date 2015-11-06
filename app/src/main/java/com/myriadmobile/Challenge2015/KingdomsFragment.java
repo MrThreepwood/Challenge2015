@@ -57,7 +57,7 @@ public class KingdomsFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        adapter = new KingdomsAdapter(kingdoms, (ChildManager) getActivity());
+        adapter = new KingdomsAdapter(kingdoms);
         recyclerView.setAdapter(adapter);
         if (!kingdoms.isEmpty()) {
             tvEmpty.setVisibility(View.GONE);
@@ -92,7 +92,9 @@ public class KingdomsFragment extends Fragment {
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("GetKingdomsFailure", "failure code " + error.getResponse().getStatus());
+                if (error.getResponse() != null) {
+                    Log.d("GetKingdomsFailure", "failure code " + error.getResponse().getStatus());
+                }
             }
         });
     }

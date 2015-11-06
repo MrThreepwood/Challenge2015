@@ -43,6 +43,9 @@ public class QuestDetails extends Fragment {
         tvQuestDescription.setText(quest.getDescription());
         tvGiverName.setText(quest.getGiver().getName());
         tvGiverDesciption.setText("Retrieving bio...");
+        if (character != null) {
+            tvGiverDesciption.setText(character.getBio());
+        }
         characterId = quest.getGiver().getId();
         if(!quest.getImage().isEmpty()) {
             Picasso.with(getActivity()).load(quest.getImage()).into(ivQuestImage);
@@ -66,6 +69,9 @@ public class QuestDetails extends Fragment {
     }
     public void setCharacter (Models.Character character) {
         this.character = character;
+        if (tvGiverDesciption == null) {
+            return;
+        }
         if (character == null || character.getBio().isEmpty()) {
             tvGiverDesciption.setText("Unfortunately this individual has not provided a bio.");
         } else {

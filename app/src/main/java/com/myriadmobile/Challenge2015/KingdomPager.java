@@ -95,7 +95,12 @@ public class KingdomPager extends Fragment {
                         for (Fragment fragment: fragments) {
                             if (fragment instanceof QuestDetails) {
                                 QuestDetails questDetails = (QuestDetails) fragment;
-                                if (questDetails.characterId == character.getId() && questDetails.character == null) {
+                                String characterId = questDetails.characterId;
+                                if (characterId == null) {
+                                    Quest fragQuest = (Quest) questDetails.getArguments().getSerializable("quest");
+                                    characterId = fragQuest.getGiver().getId();
+                                }
+                                if (characterId == character.getId() && questDetails.character == null) {
                                     questDetails.setCharacter(character);
                                 }
                             }
