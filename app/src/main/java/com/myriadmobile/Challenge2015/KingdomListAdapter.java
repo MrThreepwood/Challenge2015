@@ -18,10 +18,10 @@ import Models.KingdomBriefModel;
 /**
  * Created by joshuaswoyer on 10/21/15.
  */
-public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.KingdomsViewHolder> {
+public class KingdomListAdapter extends RecyclerView.Adapter<KingdomListAdapter.KingdomsViewHolder> {
     public List<KingdomBriefModel> kingdoms;
 
-    public KingdomsAdapter (List<KingdomBriefModel> kingdoms) {
+    public KingdomListAdapter(List<KingdomBriefModel> kingdoms) {
         this.kingdoms = kingdoms;
     }
 
@@ -71,15 +71,12 @@ public class KingdomsAdapter extends RecyclerView.Adapter<KingdomsAdapter.Kingdo
                     String kingdomId = (String) view.getTag();
                     Bundle args = new Bundle();
                     args.putString("kingdomId", kingdomId);
-                    KingdomPager f = new KingdomPager();
+                    KingdomQuestPager f = new KingdomQuestPager();
                     f.setArguments(args);
                     ChildManager swapper = (ChildManager) view.getContext();
                     swapper.swapFragments(R.id.fragment_container, f, true);
                 }
             });
-        }
-        public void onClickListener () {
-
         }
 
     }

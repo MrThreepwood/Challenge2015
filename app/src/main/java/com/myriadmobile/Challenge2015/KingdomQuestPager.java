@@ -24,16 +24,16 @@ import retrofit.client.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class KingdomPager extends Fragment {
+public class KingdomQuestPager extends Fragment {
     String kingdomId;
     KingdomDetailedModel kingdomDetails;
     ChallengeAPI api;
-    DetailAdapter detailAdapter;
+    KingdomDetailsAdapter detailAdapter;
     List<Fragment> fragments;
     @Bind(R.id.pager) ViewPager pager;
 
 
-    public KingdomPager() {
+    public KingdomQuestPager() {
         // Required empty public constructor
     }
 
@@ -73,7 +73,7 @@ public class KingdomPager extends Fragment {
                 if (kingdomDetailedModel != null) {
                     kingdomDetails = kingdomDetailedModel;
                     fragments = getFragments();
-                    detailAdapter = new DetailAdapter(getChildFragmentManager(), fragments);
+                    detailAdapter = new KingdomDetailsAdapter(getChildFragmentManager(), fragments);
                     pager.setAdapter(detailAdapter);
                     getCharacterFromAPI();
                 }
