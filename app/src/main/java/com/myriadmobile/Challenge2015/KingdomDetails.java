@@ -39,8 +39,9 @@ public class KingdomDetails extends Fragment {
         ButterKnife.bind(this, v);
         kingdom = (KingdomDetailedModel) getArguments().getSerializable("kingdom");
         if (kingdom != null) {
-            if (kingdom.getImage() != null && !kingdom.getImage().isEmpty())
+            if (kingdom.getImage() != null && !kingdom.getImage().isEmpty()) {
                 Picasso.with(getActivity()).load(kingdom.getImage()).into(ivKingdomImage);
+            }
             tvKingdomName.setText(kingdom.getName());
             tvClimate.setText(kingdom.getClimate());
             tvPopulation.setText(kingdom.getPopulation());

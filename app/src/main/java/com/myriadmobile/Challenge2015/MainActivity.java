@@ -2,7 +2,6 @@ package com.myriadmobile.Challenge2015;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements ChildManager {
         prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         if (prefs.contains("login")) {
             getSupportActionBar().setTitle(prefs.getString("login", "Default Email"));
-            KingdomsFragment kingdomsFragment = new KingdomsFragment();
+            KingdomListFragment kingdomsFragment = new KingdomListFragment();
             toolbar.setVisibility(View.VISIBLE);
             getFragmentManager().beginTransaction().add(R.id.fragment_container, kingdomsFragment).commit();
         } else {
@@ -62,18 +61,18 @@ public class MainActivity extends AppCompatActivity implements ChildManager {
         else
             super.onBackPressed();
     }
-    public Context getContext() {
-        return this;
-    }
     public class MenuItemOnClickListener implements Toolbar.OnMenuItemClickListener {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            prefs.edit().remove("login").commit();
-            LoginFragment loginFragment = new LoginFragment();
-            if(getFragmentManager().getBackStackEntryCount() > 0) {
-                getFragmentManager().popBackStackImmediate();
+            if (getString(R.string.logout).contentEquals(menuItem.getTitle())) {
+                prefs.edit().remove("login").commit();
+                LoginFragment loginFragment = new LoginFragment();
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStackImmediate();
+                }
+                swapFragments(R.id.fragment_container, loginFragment, false);
+                return true;
             }
-            swapFragments(R.id.fragment_container, loginFragment, false);
             return false;
         }
     }
@@ -84,8 +83,9 @@ public class MainActivity extends AppCompatActivity implements ChildManager {
     }
     public void swapFragments (int container, Fragment fragment, boolean backstack) {
         FragmentTransaction fTrans = getFragmentManager().beginTransaction().replace(container, fragment);
-        if (backstack)
+        if (backstack) {
             fTrans.addToBackStack("kingdoms");
+        }
         fTrans.commit();
         if (!(fragment instanceof LoginFragment)) {
             toolbar.setVisibility(View.VISIBLE);

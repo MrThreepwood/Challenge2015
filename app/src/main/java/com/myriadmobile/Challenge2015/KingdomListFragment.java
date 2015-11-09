@@ -23,19 +23,19 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class KingdomsFragment extends Fragment {
+public class KingdomListFragment extends Fragment {
     List<KingdomBriefModel> kingdoms = new ArrayList<KingdomBriefModel>();
-    KingdomsAdapter adapter;
+    KingdomListAdapter adapter;
     @Bind(R.id.cardList) RecyclerView recyclerView;
     @Bind(R.id.empty_text) TextView tvEmpty;
     @Bind(R.id.swiper) SwipeRefreshLayout swiper;
 
-    public static KingdomsFragment newInstance(String param1, String param2) {
-        KingdomsFragment fragment = new KingdomsFragment();
+    public static KingdomListFragment newInstance(String param1, String param2) {
+        KingdomListFragment fragment = new KingdomListFragment();
         return fragment;
     }
 
-    public KingdomsFragment() {
+    public KingdomListFragment() {
         // Required empty public constructor
     }
 
@@ -51,13 +51,13 @@ public class KingdomsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_kingdoms, container, false);
+        View view = inflater.inflate(R.layout.fragment_kingdom_list, container, false);
         ButterKnife.bind(this, view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        adapter = new KingdomsAdapter(kingdoms);
+        adapter = new KingdomListAdapter(kingdoms);
         recyclerView.setAdapter(adapter);
         if (!kingdoms.isEmpty()) {
             tvEmpty.setVisibility(View.GONE);

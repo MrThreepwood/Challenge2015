@@ -35,7 +35,6 @@ public class QuestDetails extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_quest_details, container, false);
         ButterKnife.bind(this, v);
         Quest quest = (Quest) getArguments().getSerializable("quest");

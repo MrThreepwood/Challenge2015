@@ -86,7 +86,7 @@ public class LoginFragment extends Fragment {
                 public void success(MessageModel messageModel, Response response) {
                     if (response.getStatus() == 200) {
                         mListener.setPreferences("login", emailText);
-                        KingdomsFragment fragment = new KingdomsFragment();
+                        KingdomListFragment fragment = new KingdomListFragment();
                         mListener.swapFragments(R.id.fragment_container, fragment, false);
                     }
                 }
