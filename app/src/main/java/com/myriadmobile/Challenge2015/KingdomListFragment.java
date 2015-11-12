@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ public class KingdomListFragment extends Fragment {
     List<KingdomBriefModel> kingdoms = new ArrayList<KingdomBriefModel>();
     KingdomListAdapter adapter;
     @Bind(R.id.cardList) RecyclerView recyclerView;
+    @Bind(R.id.progress_bar) ProgressBar progressBar;
     @Bind(R.id.empty_text) TextView tvEmpty;
     @Bind(R.id.swiper) SwipeRefreshLayout swiper;
 
@@ -42,7 +43,6 @@ public class KingdomListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createDummyKingdoms();
         getKingdoms();
     }
 
@@ -53,15 +53,13 @@ public class KingdomListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_kingdom_list, container, false);
         ButterKnife.bind(this, view);
+        tvEmpty.setVisibility(View.GONE);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
         adapter = new KingdomListAdapter(kingdoms);
         recyclerView.setAdapter(adapter);
-        if (!kingdoms.isEmpty()) {
-            tvEmpty.setVisibility(View.GONE);
-        }
         swiper.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -71,11 +69,17 @@ public class KingdomListFragment extends Fragment {
         return view;
     }
 
-    private void createDummyKingdoms() {
-        for (int i = 0; i < 12; i++) {
-            kingdoms.add(new KingdomBriefModel(Integer.toString(i), "Kingdom " + i, null));
+    @Override
+    public void onResume() {
+        super.onResume();
+        tvEmpty.setVisibility(View.GONE);
+        if (kingdoms != null) {
+            progressBar.setVisibility(View.GONE);
+            return;
         }
+        getKingdoms();
     }
+
     private void getKingdoms() {
         MyApplication application = (MyApplication) getActivity().getApplication();
         ChallengeAPI api = application.getApiInstance();
@@ -83,18 +87,32 @@ public class KingdomListFragment extends Fragment {
             @Override
             public void success(List<KingdomBriefModel> kingdomsResponse, Response response) {
                 if (kingdomsResponse != null && !kingdomsResponse.isEmpty()) {
+                    tvEmpty.setVisibility(View.GONE);
                     kingdoms = kingdomsResponse;
                     adapter.kingdoms = kingdoms;
                     adapter.notifyDataSetChanged();
                     swiper.setRefreshing(false);
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    noData();
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                if (error.getResponse() != null) {
-                    Log.d("GetKingdomsFailure", "failure code " + error.getResponse().getStatus());
+                swiper.setRefreshing(false);
+                progressBar.setVisibility(View.GONE);
+                String errorMessage = "";
+                if (error != null) {
+                    errorMessage = error.getMessage();
                 }
+                tvEmpty.setText(errorMessage + " Pull to try again.");
+                tvEmpty.setVisibility(View.VISIBLE);
+            }
+            public void noData() {
+                swiper.setRefreshing(false);
+                progressBar.setVisibility(View.GONE);
+                tvEmpty.setText("Sorry, no kingdoms were found. Pull to look again.");
             }
         });
     }
