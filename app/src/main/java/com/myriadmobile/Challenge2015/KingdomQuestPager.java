@@ -7,6 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +30,11 @@ public class KingdomQuestPager extends Fragment {
     String kingdomId;
     KingdomDetailedModel kingdomDetails;
     ChallengeAPI api;
-    KingdomDetailsAdapter detailAdapter;
+    KingdomDetailsPager detailAdapter;
     List<Fragment> fragments;
     @Bind(R.id.pager) ViewPager pager;
+    @Bind(R.id.progress_bar) ProgressBar progressBar;
+    @Bind(R.id.empty_text) TextView tvEmptyText;
 
 
     public KingdomQuestPager() {
@@ -42,11 +46,40 @@ public class KingdomQuestPager extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.pager_kingdom_quest, container, false);
+        ButterKnife.bind(this, v);
+        tvEmptyText.setVisibility(View.GONE);
         kingdomId = getArguments().getString("kingdomId");
         getKingdomFromAPI();
-        View v = inflater.inflate(R.layout.fragment_kingdom_pager, container, false);
-        ButterKnife.bind(this, v);
         return v;
+    }
+
+    private void getKingdomFromAPI() {
+        api = ((MyApplication) getActivity().getApplication()).getApiInstance();
+        api.getKingdomDetails(kingdomId, new Callback<KingdomDetailedModel>() {
+            @Override
+            public void success(KingdomDetailedModel kingdomDetailedModel, Response response) {
+                if (kingdomDetailedModel != null) {
+                    kingdomDetails = kingdomDetailedModel;
+                    fragments = getFragments();
+                    detailAdapter = new KingdomDetailsPager(getChildFragmentManager(), fragments);
+                    pager.setAdapter(detailAdapter);
+                    progressBar.setVisibility(View.GONE);
+                    getCharacterFromAPI();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressBar.setVisibility(View.GONE);
+                String errorMessage = "";
+                if (error != null) {
+                    errorMessage = error.getMessage();
+                }
+                tvEmptyText.setText(errorMessage + " Please try again later.");
+                tvEmptyText.setVisibility(View.VISIBLE);
+            }
+        });
     }
     public List<Fragment> getFragments() {
         List<Fragment> fragments = new ArrayList<>();
@@ -63,27 +96,6 @@ public class KingdomQuestPager extends Fragment {
             fragments.add(questFrag);
         }
         return fragments;
-    }
-
-    private void getKingdomFromAPI() {
-        api = ((MyApplication) getActivity().getApplication()).getApiInstance();
-        api.getKingdomDetails(kingdomId, new Callback<KingdomDetailedModel>() {
-            @Override
-            public void success(KingdomDetailedModel kingdomDetailedModel, Response response) {
-                if (kingdomDetailedModel != null) {
-                    kingdomDetails = kingdomDetailedModel;
-                    fragments = getFragments();
-                    detailAdapter = new KingdomDetailsAdapter(getChildFragmentManager(), fragments);
-                    pager.setAdapter(detailAdapter);
-                    getCharacterFromAPI();
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
     }
     private void getCharacterFromAPI() {
         for (Quest quest: kingdomDetails.getQuests()) {

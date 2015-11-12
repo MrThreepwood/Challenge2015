@@ -10,10 +10,10 @@ import java.util.List;
 /**
  * Created by joshuaswoyer on 10/23/15.
  */
-public class KingdomDetailsAdapter extends FragmentPagerAdapter {
+public class KingdomDetailsPager extends FragmentPagerAdapter {
     private List<Fragment> fragments;
 
-    public KingdomDetailsAdapter(FragmentManager fm, List<Fragment> fragments) {
+    public KingdomDetailsPager(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
         this.fragments = fragments;
     }

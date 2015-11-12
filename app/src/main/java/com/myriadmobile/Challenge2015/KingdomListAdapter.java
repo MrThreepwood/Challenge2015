@@ -14,6 +14,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import Models.KingdomBriefModel;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by joshuaswoyer on 10/21/15.
@@ -36,11 +38,12 @@ public class KingdomListAdapter extends RecyclerView.Adapter<KingdomListAdapter.
         kingdomsViewHolder.vKingdomName.setText(kingdom.getName());
         //Picasso.with(swapper.getContext()).setLoggingEnabled(true);
         //Picasso.with(swapper.getContext()).setIndicatorsEnabled(true);
-        if (kingdom.getImage() != null && !kingdom.getImage().isEmpty())
+        if (kingdom.getImage() != null && !kingdom.getImage().isEmpty()) {
             Picasso.with(kingdomsViewHolder.view.getContext())
-                .load(kingdom.getImage())
-                .fit()
-                .into(kingdomsViewHolder.vImage);
+                    .load(kingdom.getImage())
+                    .fit()
+                    .into(kingdomsViewHolder.vImage);
+        }
         Log.d("KingdomId", "onBindViewHolder " + kingdom.getId());
         kingdomsViewHolder.view.setTag(kingdom.getId());
     }
@@ -55,16 +58,15 @@ public class KingdomListAdapter extends RecyclerView.Adapter<KingdomListAdapter.
     }
     public static class KingdomsViewHolder extends RecyclerView.ViewHolder {
         //TODO: Figure out if I can use butterknife here.
-        protected ImageView vImage;
-        protected TextView vKingdomName;
+        @Bind(R.id.kingdom_image) ImageView vImage;
+        @Bind(R.id.kingdom_name) TextView vKingdomName;
         protected View view;
 
 
         public KingdomsViewHolder (View view) {
             super(view);
             this.view = view;
-            vImage = (ImageView) view.findViewById(R.id.kingdom_image);
-            vKingdomName = (TextView) view.findViewById(R.id.kingdom_name);
+            ButterKnife.bind(this, view);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
